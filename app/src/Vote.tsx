@@ -1,4 +1,4 @@
-mport type { Component } from 'solid-js';
+import type { Component } from 'solid-js';
 import { createSignal, Show } from 'solid-js';
 import pollInfo from './api/info';
 import { ReactiveSet } from '@solid-primitives/set';
