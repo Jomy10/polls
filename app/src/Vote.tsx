@@ -52,6 +52,7 @@ const Vote: Component = (params: { pollId: string }) => {
     votes.has(opt) ? votes.delete(opt) : votes.add(opt);
   };
   
+  const [voted, setVoted] = createSignal(false);
   /** Submit votes */
   const submitVote = () => {
     // Update local vote count
@@ -69,28 +70,44 @@ const Vote: Component = (params: { pollId: string }) => {
           console.log("Couldn't cast vote", e);
           // TODO: warn user
         });
+        
+      setVoted(true);
     }
   };
   
-  // todo: update pollVotes with votes
+  // TODO: styling for votes
     
   return <>
     <Show when={loaded()} fallback={<p>Loading...</p>}>
-      <h1>{title()}</h1>
-      <ul>
-        <For each={options()}>{(opt, i) => 
-          <li>
-            <button 
-              class={`${ votes.has(opt) ? "selected" : ""}`}
-              onClick={() => { toggleVote(opt) } }
-            >
-              {opt()}
-            </button>
-          </li>
-        }</For>
-      </ul>
-      <button onClick={submitVote}>Submit vote</button>
-    </Show>
+      <Switch fallback={<p>Error: Unknown state</p>}>
+        <Match when={!voted()}>
+          <h1>{title()}</h1>
+          <ul>
+            <For each={options()}>{(opt, i) => 
+              <li>
+                <button 
+                  class={`${ votes.has(opt) ? "selected" : ""}`}
+                  onClick={() => { toggleVote(opt) } }
+                >
+                  {opt}
+                </button>
+              </li>
+            }</For>
+          </ul>
+          <button onClick={submitVote}>Submit vote</button>
+        </Match>
+        <Match when={voted()}>
+          <h1>{title()}</h1>
+          <ul>
+            <For each={options()}>{(opt, i) => 
+              <li>
+                <p>{opt}: {pollVotes[opt]}</p>
+              </li>
+            }</For>
+          </ul>
+        </Match>
+      </Switch>
+   </Show>
   </>;
 };
 

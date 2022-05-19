@@ -1,7 +1,8 @@
 import type { VoteMap } from '../Vote';
+import _endpoint from './endpoint';
 
 export default async function pollInfo(id: string): Promise<{title: string, votes: VoteMap}> {
-    const endpoint = `https://vote.jomy.dev/api/info?pollId=${id}`;
+    const endpoint = `${_endpoint}/api/info?pollId=${id}`;
     
     let response = await fetch(endpoint, {
         method: 'GET',
