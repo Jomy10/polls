@@ -71,6 +71,7 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	var pollData util.Poll
 	dsnap.DataTo(&pollData)
 
+	log.Println("Voting for", params.Vote, "current is", pollData.Votes[params.Vote])
 	pollData.Votes[params.Vote] += 1
 
 	// update votes
