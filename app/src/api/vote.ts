@@ -5,12 +5,12 @@ import _endpoint from './endpoint';
  * @param pollId {string} - the poll id of the poll the user is voting for
  * @param vote {string} - the vote the user wishes to cast
  */
-export default async function castVote(pollId: string, vote: string): Promise<boolean> {
+export default async function castVote(pollId: string, vote: [string]): Promise<boolean> {
   const endpoint = `${_endpoint}/api/vote`;
   
   const data = JSON.stringify({
     pollId: pollId,
-    vote: vote.trim()
+    vote: vote
   });
   
   console.log("voting for", vote);

@@ -13,8 +13,6 @@ import (
 	"net/http"
 )
 
-// TODO: endpoint for voting multiple (this way firebase doesn't hav to be initialized {votes} amount of times)
-
 func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/api/vote" {
 		http.Error(res, "Wrong endpoint", http.StatusTeapot)
@@ -71,8 +69,10 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	var pollData util.Poll
 	dsnap.DataTo(&pollData)
 
-	log.Println("Voting for", params.Vote, "current is", pollData.Votes[params.Vote])
-	pollData.Votes[params.Vote] += 1
+	log.Println("Received votes for", params.Vote)
+	for _, vote := range params.Vote {
+		pollData.Votes[vote] += 1
+	}
 
 	// update votes
 	_, err = doc.Update(context.Background(), []firestore.Update{
@@ -93,7 +93,7 @@ type Params struct {
 	// The id of the poll
 	PollId string `json:"pollId"`
 	// The name of the option the user chose
-	Vote string `json:"vote"`
+	Vote []string `json:"vote"`
 }
 
 func getParams(req *http.Request) (Params, error) {

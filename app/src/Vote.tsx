@@ -26,11 +26,11 @@ async function getPoll(pollId: string): Promise<{ title: string, votes: VoteMap 
 const Vote: Component = (params: { pollId: string }) => {
   const pollId: string = params.pollId;
   
-  let [loaded, setLoaded] = createSignal(false);
-  let [title, setTitle] = createSignal("");
-  let [options, setOptions] = createSignal([]);
+  const [loaded, setLoaded] = createSignal(false);
+  const [title, setTitle] = createSignal("");
+  const [options, setOptions] = createSignal([]);
   
-  let pollVotes: Object;
+  const [pollVotes, setPollVotes] = createSignal({});
   
   getPoll(pollId)
     .then((poll) => {
@@ -42,7 +42,7 @@ const Vote: Component = (params: { pollId: string }) => {
       
       setLoaded(true);
       
-      pollVotes = poll.votes;
+      setPollVotes(poll.votes);
     });
     
   const votes = new ReactiveSet<string>([]);
@@ -55,23 +55,32 @@ const Vote: Component = (params: { pollId: string }) => {
   /** Submit votes */
   const submitVote = () => {
     // Update local vote count
+    let toVote = [];
     for (let vote of votes) {
-      let currentVotes = pollVotes[vote];
+      let currentVotes = pollVotes()[vote];
       if (currentVotes == null) {
-        pollVotes[vote] = 1;
+        let _votes = pollVotes();
+        _votes[vote] = 1;
+        // pollVotes()[vote] = 1;
+        setPollVotes({ ..._votes });
       } else {
-        pollVotes[vote] = currentVotes + 1;
+        let _votes = pollVotes();
+        _votes[vote] = currentVotes + 1;
+        setPollVotes({ ..._votes });
       }
+      toVote.push(vote);
+    } // endfor
+    
+    
+    // send vote
+    castVote(pollId, toVote)
+      .catch((e) => {
+        console.log("Couldn't cast vote", e);
+        // TODO: warn user in a better way
+        alert(`Couldn't cast vote ${e}`);
+      });
       
-      // send vote
-      castVote(pollId, vote)
-        .catch((e) => {
-          console.log("Couldn't cast vote", e);
-          // TODO: warn user
-        });
-        
-      setVoted(true);
-    }
+    setVoted(true);
   };
   
   // TODO: styling for votes
@@ -100,7 +109,7 @@ const Vote: Component = (params: { pollId: string }) => {
           <ul>
             <For each={options()}>{(opt, i) => 
               <li>
-                <p>{opt}: {pollVotes[opt]}</p>
+                <p>{opt}: {pollVotes()[opt]}</p>
               </li>
             }</For>
           </ul>
