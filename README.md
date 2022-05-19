@@ -24,6 +24,14 @@ The project is written to work with **Vercel**, but can also be used as a regula
 If you do use it as a server, you can edit the way firebase is authenticated so it doesn't do that
 on every request.
 
+## Example requests
+
+```bash
+# Poll info
+curl -X GET mydomain.com/api/info -d '{"pollId": "SOME_POLL_ID"}'
+> {"Title":"Language","Votes":{"Rust":1,"Swift":5}}
+```
+
 ## License
 
 This project is licensed under the [MIT license](LICENSE).

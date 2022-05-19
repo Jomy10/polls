@@ -1,4 +1,4 @@
-module github.com/jomy10/poll
+module github.com/jomy10/polls
 
 go 1.18
 

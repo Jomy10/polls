@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jomy10/poll/api"
+	"github.com/jomy10/polls/api"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +11,7 @@ import (
 func main() {
 	fmt.Println("Starting server at port ")
 	http.HandleFunc("/api/vote", api.VoteHandler)
+	http.HandleFunc("/api/info", api.PollInfoHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

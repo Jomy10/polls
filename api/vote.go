@@ -5,13 +5,15 @@ import (
 	"io/ioutil"
 
 	"cloud.google.com/go/firestore"
-	pfb "github.com/jomy10/poll/firebase"
+	pfb "github.com/jomy10/polls/firebase"
+	"github.com/jomy10/polls/util"
 
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 )
+
+// TODO: endpoint for voting multiple (this way firebase doesn't hav to be initialized {votes} amount of times)
 
 func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/api/vote" {
@@ -21,10 +23,9 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 
 	if req.Method != "POST" {
 		http.Error(res, "Method is not supported", http.StatusMethodNotAllowed)
-		fmt.Println("Method not supported")
 		return
 	}
-	res.Header().Add("Access-Control-Allow-Origin", "*")
+	res.Header().Add("Access-Control-Allow-Origin", util.ALLOW_ORIGIN)
 	res.Header().Add("Access-Control-Allow-Methods", "POST")
 	res.Header().Add("Access-Control-Allow-Headers", "*")
 
@@ -47,6 +48,7 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	_, firestoreDB, err := pfb.InitFirebase("jomy-database")
 	if err != nil {
 		http.Error(res, "Couldn't connect to firebase", http.StatusBadGateway)
+		log.Println("Couldn't connect to firebase", err)
 		return
 	}
 
@@ -62,9 +64,11 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 	dsnap, err := doc.Get(context.Background())
 	if err != nil {
 		http.Error(res, "Couln't read firestore document", http.StatusBadGateway)
+		log.Println("Couldln't read firestore document", err)
+		return
 	}
 
-	var pollData Poll
+	var pollData util.Poll
 	dsnap.DataTo(&pollData)
 
 	pollData.Votes[params.Vote] += 1
@@ -82,12 +86,6 @@ func VoteHandler(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte("Succesfully voted"))
-}
-
-type Poll struct {
-	Title string
-	// Amount of votes mapped to the options
-	Votes map[string]int
 }
 
 type Params struct {
