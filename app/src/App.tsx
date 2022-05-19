@@ -12,7 +12,6 @@ const App: Component = () => {
   
   const showVote = (_pollId: string) => {
     setPollId(_pollId);
-    console.log(_pollId);
     setShow("vote");
   }
     

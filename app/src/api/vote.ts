@@ -21,8 +21,6 @@ export default async function castVote(pollId: string, vote: string): Promise<bo
     body: data
   });
   
-  console.log(response);
-  
   if (!response.ok) {
     throw response.statusText;
   } else {

@@ -6,7 +6,6 @@ import type { Component } from 'solid-js';
  */
 const Home: Component = (params: { showVote: (arg: any) => void }) => {
   const onKeyDown = (e: any) => {
-    console.log(e);
     if (e.key == "Enter") {
       let pollIdVal = e.target.value;
       params.showVote(pollIdVal);

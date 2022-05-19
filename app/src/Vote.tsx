@@ -1,4 +1,4 @@
-import type { Component } from 'solid-js';
+mport type { Component } from 'solid-js';
 import { createSignal, Show } from 'solid-js';
 import pollInfo from './api/info';
 import { ReactiveSet } from '@solid-primitives/set';
@@ -25,7 +25,6 @@ async function getPoll(pollId: string): Promise<{ title: string, votes: VoteMap 
  */
 const Vote: Component = (params: { pollId: string }) => {
   const pollId: string = params.pollId;
-  console.log("pollId in Vote", pollId);
   
   let [loaded, setLoaded] = createSignal(false);
   let [title, setTitle] = createSignal("");
