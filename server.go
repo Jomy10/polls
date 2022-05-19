@@ -2,15 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/jomy10/polls/api"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/jomy10/polls/api"
+	"github.com/jomy10/polls/middleware"
 )
 
 func main() {
 	fmt.Println("Starting server at port ")
-	http.HandleFunc("/api/vote", api.VoteHandler)
+	authenticated := middleware.NewAuth(os.Getenv("SECRET_KEY"))
+
+	http.Handle("/api/vote", authenticated(http.HandlerFunc(api.VoteHandler)))
 	http.HandleFunc("/api/info", api.PollInfoHandler)
 
 	port := os.Getenv("PORT")
